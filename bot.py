@@ -40,7 +40,17 @@ if __name__ == "__main__":
     @bot.slash_command(name="album", description="Admin Only: Pick an Album For The Next Meeting.")
     async def album(ctx: discord.ApplicationContext):
         chosen_album = await pick_album(ALBUMS_CSV)
-        await ctx.respond(await ltostr(chosen_album))
+        # await ctx.respond(await ltostr(chosen_album))
+
+        # build embed 
+
+        embed = discord.Embed(
+            title="Album of the Week",
+            description="",
+            color=discord.Colour.from_rgb(0,255,0)
+        )
+        
+
 
 
     # events for when the bot goes online

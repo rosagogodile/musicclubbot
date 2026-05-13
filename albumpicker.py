@@ -18,19 +18,18 @@ DATE_INDEX = 2
 GENRE_INDEX = 3
 
 # function that recursively converts a list into a string 
-# used for testing, and not much else! 
-async def ltostr(a: list) -> str:
+async def ltostr(a: list, sep: str) -> str:
     if isinstance(a, list) == False:
-        # or used to convert `None` to empty string
+        # `or` used to convert `None` to empty string
         return str(a) or ""
 
     output = ""
 
     for i in a:
         if isinstance(i, list) == False:
-            output += f"{str(i)} "
+            output += f"{str(i)}{sep}"
         else:
-            output += f"{await ltostr(i)} "
+            output += f"{await ltostr(i, sep)} "
 
     return output
 

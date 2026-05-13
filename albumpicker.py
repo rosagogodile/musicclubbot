@@ -99,3 +99,24 @@ async def pick_album(filename: str) -> list:
     rtrnval[GENRE_INDEX] = rtrnval[GENRE_INDEX].split("|")
 
     return rtrnval
+
+# function that returns the current album of the week
+async def current_aotw(filename: str) -> list:
+    # list that contains file contents 
+    albums = []
+
+    async with aiofiles.open(filename, "r", encoding="utf-8") as acsv:
+        file_contents = await acsv.read()
+        # set up csv reader 
+        csvreader = csv.reader(StringIO(file_contents))
+
+        for row in csvreader:
+            albums.append(row)
+
+    # find current weekly album using boolean values 
+    for a in albums:
+        if a[-1] == "1":
+            return a
+
+    # no current weekly album
+    return None 

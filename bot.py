@@ -12,8 +12,7 @@ from dotenv import load_dotenv
 import os 
 import discord 
 from admincheck import check_admin
-# import asyncio
-
+from albumpicker import *
 
 # MAIN
 if __name__ == "__main__":
@@ -21,18 +20,10 @@ if __name__ == "__main__":
     load_dotenv()
 
     TOKEN = str(os.getenv("TOKEN"))
-    ALBUMS_CSV = str(os.getenv("ALBUMS_CSV"))
-
+    ALBUMS_CSV = str(os.getenv("ALBUM_CSV"))
 
     # intialize bot 
     bot = discord.Bot()
-
-    # events for when the bot goes online
-    @bot.event
-    async def on_ready():
-        print(f"{bot.user} is online.")
-        game = discord.Game("Listening to In The Court of the Green King")
-        await bot.change_presence(status=discord.Status.dnd, activity=game)
 
     """
     # old test command
@@ -44,8 +35,20 @@ if __name__ == "__main__":
         else:
             await ctx.respond("not admin.")
     """
-
     
+
+    @bot.slash_command(name="album", description="Admin Only: Pick an Album For The Next Meeting.")
+    async def album(ctx: discord.ApplicationContext):
+        chosen_album = await pick_album(ALBUMS_CSV)
+        await ctx.respond(await ltostr(chosen_album))
+
+
+    # events for when the bot goes online
+    @bot.event
+    async def on_ready():
+        print(f"{bot.user} is online.")
+        game = discord.Game("Listening to In The Court of the Green King")
+        await bot.change_presence(status=discord.Status.dnd, activity=game)
 
     # run the bot 
     bot.run(TOKEN)

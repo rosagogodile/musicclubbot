@@ -49,6 +49,10 @@ if __name__ == "__main__":
             description="",
             color=discord.Colour.from_rgb(0,255,0)
         )
+
+        embed.set_thumbnail(url="")
+
+        await ctx.respond("@everyone", embed=embed)
         
 
 

@@ -1,7 +1,7 @@
 """
 Written by Rosa Marie Knowles 
 Initial Commit: 05/12/2026 
-Latest Commit:  05/13/2026
+Latest Commit:  05/14/2026
 
 Discord bot for randomly selecting an album for a music club.
 """
@@ -68,6 +68,21 @@ if __name__ == "__main__":
         else:
             await ctx.respond("not admin.")
     """
+
+    @bot.slash_command(name="allalbums", description="Admin Only: Displays all albums in the database.")
+    async def allalbums(ctx: discord.ApplicationContext):
+        # only allow admins to run this command 
+        if (await check_admin(ctx)):
+            # retrieve database
+            albums = await every_album(ALBUMS_CSV)
+
+            # get every album as an embed, and send the embed
+            for a in albums:
+                await ctx.respond("", embed= await build_embed(a))
+
+        else:
+            # user that isn't an admin tries to run this command 
+            await ctx.respond(default_admin_response("allalbums"))
     
 
     @bot.slash_command(name="current", description="Displays the current Album of the Week.")
@@ -114,7 +129,7 @@ if __name__ == "__main__":
                 )
         else:
             # user that isn't an admin tries to run this command 
-            await ctx.respond(default_admin_response("Album"))
+            await ctx.respond(default_admin_response("aotw"))
 
     # events for when the bot goes online
     @bot.event

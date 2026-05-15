@@ -1,7 +1,7 @@
 """
 Written by Rosa Marie Knowles 
 Initial Commit: 05/13/2026 
-Latest Commit:  05/13/2026
+Latest Commit:  05/14/2026
 
 Code to pick an album from a csv file
 """
@@ -32,6 +32,20 @@ async def ltostr(a: list, sep: str) -> str:
             output += f"{await ltostr(i, sep)} "
 
     return output
+
+# function that processes the contents of an album into something that actually looks nice
+async def process_album(album: list) -> list:
+    # update date format 
+    temp = album[DATE_INDEX].split("/")
+    # year, month, day
+    new_date = datetime(int(temp[2]), int(temp[0]), int(temp[1]))
+    album[DATE_INDEX] = new_date.strftime("%B %d, %Y")
+
+    # convert genres into a list of genres 
+    album[GENRE_INDEX] = album[GENRE_INDEX].split("|")
+
+    return album
+
 
 # function that picks an album
 async def pick_album(filename: str) -> list:
@@ -88,17 +102,7 @@ async def pick_album(filename: str) -> list:
         await acsv.write(file_contents)
 
     rtrnval = albums[idx]
-
-    # update date format 
-    temp = rtrnval[DATE_INDEX].split("/")
-    # year, month, day
-    new_date = datetime(int(temp[2]), int(temp[0]), int(temp[1]))
-    rtrnval[DATE_INDEX] = new_date.strftime("%B %d, %Y")
-
-    # convert genres into a list of genres 
-    rtrnval[GENRE_INDEX] = rtrnval[GENRE_INDEX].split("|")
-
-    return rtrnval
+    return await process_album(rtrnval)
 
 # function that returns the current album of the week
 async def current_aotw(filename: str) -> list:
@@ -116,7 +120,24 @@ async def current_aotw(filename: str) -> list:
     # find current weekly album using boolean values 
     for a in albums:
         if a[-1] == "1":
-            return a
+            return await process_album(a)
 
     # no current weekly album
     return None 
+
+# returns a list of every album in the database, after being processed
+async def every_album(filename: str) -> list:
+    # list that contains file contents 
+    albums = []
+
+    async with aiofiles.open(filename, "r", encoding="utf-8") as acsv:
+        file_contents = await acsv.read()
+        # set up csv reader 
+        csvreader = csv.reader(StringIO(file_contents))
+
+        for row in csvreader:
+            albums.append(row)
+
+    # process the albums into a format that looks nice
+    processed_albums = [await process_album(x) for x in albums]
+    return processed_albums

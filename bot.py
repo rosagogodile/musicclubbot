@@ -1,7 +1,7 @@
 """
 Written by Rosa Marie Knowles 
 Initial Commit: 05/12/2026 
-Latest Commit:  05/14/2026
+Latest Commit:  05/19/2026
 
 Discord bot for randomly selecting an album for a music club.
 """
@@ -18,6 +18,10 @@ from albumpicker import *
 def default_admin_response(command_name:str) -> str:
     return f"Only users with Administrator privileges are able to run ***{command_name}***."
 
+# replaces a (hardcoded) placeholder character with commas 
+def fix_comma(i:str) -> str:
+    return i.replace("∘", ",")
+
 # helper function that builds embed for album of the week
 async def build_embed(chosen_album:list) -> discord.Embed:
     embed = discord.Embed(
@@ -26,14 +30,15 @@ async def build_embed(chosen_album:list) -> discord.Embed:
         color=discord.Colour.from_rgb(0,255,0)
     )
 
-    embed.add_field(name="Album Title:", value=chosen_album[1], inline=False)
-    embed.add_field(name="Artist:", value=chosen_album[0], inline=False)
-    embed.add_field(name="Date Released:", value=chosen_album[2], inline=False)
+    embed.add_field(name="Album Title:", value=fix_comma(chosen_album[1]), inline=False)
+    embed.add_field(name="Artist:", value=fix_comma(chosen_album[0]), inline=False)
+    embed.add_field(name="Date Released:", value=fix_comma(chosen_album[2]), inline=False)
 
     # adds genres to embed 
     # changes field to be plural if there are more than one genres 
     # removes the last 2 characters of the genre embed since they are a trailing comma and whitespace
     genres = await ltostr(chosen_album[3], ", ")
+    genres = fix_comma(genres)
     embed.add_field(name="Genres:" if len(chosen_album) > 1 else "Genre:", value=genres[:-2], inline=False)
 
     embed.set_author(name="Album Chud", icon_url=THUMB)

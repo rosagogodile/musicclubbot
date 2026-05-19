@@ -1,7 +1,7 @@
 """
 Written by Rosa Marie Knowles 
 Initial Commit: 05/13/2026 
-Latest Commit:  05/13/2026
+Latest Commit:  05/19/2026
 
 Script for managing the csv file containing the albums 
 """
@@ -10,6 +10,11 @@ Script for managing the csv file containing the albums
 from dotenv import load_dotenv
 import csv
 import os
+
+# replaces commas with a hardcoded placeholder character 
+# allows csv files to contain strings with commas in them without breaking
+def mod_comma(i:str) -> str:
+    return i.replace(",", "∘")
 
 # helper function, shouldn't be called by user
 def update_file(contents: list, filepath: str) -> None:
@@ -45,15 +50,15 @@ def reset(contents: list, filepath: str) -> list:
 def add_album(contents: list, filepath: str) -> list: 
     new_album = []
 
-    new_album.append(input("Artist name: ").strip())
-    new_album.append(input("Album name: ").strip())
-    new_album.append(input("Release Date (mm/dd/yyyy): ").strip())
+    new_album.append(mod_comma(input("Artist name: ").strip()))
+    new_album.append(mod_comma(input("Album name: ").strip()))
+    new_album.append(mod_comma(input("Release Date (mm/dd/yyyy): ").strip()))
 
     # loop and allow user to add multiple genres 
     looping = True
     genres = []
     while looping: 
-        choice = input("Add Genre (q to exit loop): ").strip()
+        choice = mod_comma(input("Add Genre (q to exit loop): ").strip())
         if choice == "q":
             looping = False
         else:
@@ -67,6 +72,7 @@ def add_album(contents: list, filepath: str) -> list:
     genres_str = genres_str[:-1]
 
     new_album.append(genres_str)
+    # don't need to call `mod_comma` here since an image link shouldn't have a comma in it 
     new_album.append(input("Album Cover Link: ").strip())
 
     # append booleans used to check if album has been listened to 
